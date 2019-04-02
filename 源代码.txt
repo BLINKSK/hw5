@@ -1,0 +1,757 @@
+1频域低通滤波器：设计低通滤波器包括 butterworth and Gaussian (选择合适的半径，计算功率谱比),平滑测试图像test1和2;分析各自优缺点；
+%1. butterworth 低通
+clear;
+p=imread('test1.pgm');
+figure(1)
+subplot (2,2,1) ; 
+imshow(p);
+title('test1.pgm的原始图像');
+a=double(p);
+f=fft2(a);
+f=fftshift(f);
+[m,n]=size(f);
+n_butterworth=2;
+r=25;
+for i=1:m
+    for j=1:n
+        b(i,j)=sqrt((i-fix(m/2))^2+(j-fix(n/2))^2);
+        h(i,j)=1/(1+(b(i,j)/r)^(2*n_butterworth));
+        g(i,j)=h(i,j)*f(i,j);
+    end
+end
+g1=ifftshift(g);
+g1=ifft2(g1);
+g1=uint8(real(g1));
+subplot(2,2,2);
+imshow(g1);
+title('test1.pgm  butterworth  半径r=25');
+w=0;
+w1=0;
+for i=1:m
+    for j=1:n
+        e1=(abs(g(i,j)))^2;
+        w1=w1+e1;
+        e=(abs(f(i,j)))^2;
+        w=w+e;
+    end
+end
+pb=w1/w
+
+
+p=imread('test1.pgm');
+subplot (2,2,3) ; 
+imshow(p);
+title('test1.pgm的原始图像');
+a=double(p);
+f=fft2(a);
+f=fftshift(f);
+[m,n]=size(f);
+n_butterworth=2;%n-butterworth
+r=75;
+for i=1:m
+    for j=1:n
+        b(i,j)=sqrt((i-fix(m/2))^2+(j-fix(n/2))^2);
+        h(i,j)=1/(1+(b(i,j)/r)^(2*n_butterworth));
+        g(i,j)=h(i,j)*f(i,j);
+    end
+end
+g1=ifftshift(g);
+g1=ifft2(g1);
+g1=uint8(real(g1));
+subplot(2,2,4);
+imshow(g1);
+title('test1.pgm  butterworth  半径r=75');
+w=0;
+w1=0;
+for i=1:m
+    for j=1:n
+        e1=(abs(g(i,j)))^2;
+        w1=w1+e1;
+        e=(abs(f(i,j)))^2;
+        w=w+e;
+    end
+end
+pb1=w1/w
+
+
+
+clear;
+p=imread('test2.tif');
+figure(2)
+subplot (2,2,1) ; 
+imshow(p);
+title('test2.tif的原始图像');
+a=double(p);
+f=fft2(a);
+f=fftshift(f);
+[m,n]=size(f);
+n_butterworth=2;%n-butterworth
+r=25;
+for i=1:m
+    for j=1:n
+        b(i,j)=sqrt((i-fix(m/2))^2+(j-fix(n/2))^2);
+        h(i,j)=1/(1+(b(i,j)/r)^(2*n_butterworth));
+        g(i,j)=h(i,j)*f(i,j);
+    end
+end
+g1=ifftshift(g);
+g1=ifft2(g1);
+g1=uint8(real(g1));
+subplot(2,2,2);
+imshow(g1);
+title('test2.tif  butterworth  半径r=25');
+w=0;
+w1=0;
+for i=1:m
+    for j=1:n
+        e1=(abs(g(i,j)))^2;
+        w1=w1+e1;
+        e=(abs(f(i,j)))^2;
+        w=w+e;
+    end
+end
+pb2=w1/w
+
+clear;
+p=imread('test2.tif');
+subplot (2,2,3) ; 
+imshow(p);
+title('test2.tif的原始图像');
+a=double(p);
+f=fft2(a);
+f=fftshift(f);
+[m,n]=size(f);
+n_butterworth=2;%n-butterworth
+r=75;
+for i=1:m
+    for j=1:n
+        b(i,j)=sqrt((i-fix(m/2))^2+(j-fix(n/2))^2);
+        h(i,j)=1/(1+(b(i,j)/r)^(2*n_butterworth));
+        g(i,j)=h(i,j)*f(i,j);
+    end
+end
+g1=ifftshift(g);
+g1=ifft2(g1);
+g1=uint8(real(g1));
+subplot(2,2,4);
+imshow(g1);
+title('test2.tif  butterworth  半径r=75');
+w=0;
+w1=0;
+for i=1:m
+    for j=1:n
+        e1=(abs(g(i,j)))^2;
+        w1=w1+e1;
+        e=(abs(f(i,j)))^2;
+        w=w+e;
+    end
+end
+pb3=w1/w
+
+%2.高斯低通
+clear;
+p=imread('test1.pgm');
+figure(1)
+subplot (2,2,1) ; 
+imshow(p);
+title('test1.pgm的原始图像');
+a=double(p);
+f=fft2(a);
+f=fftshift(f);
+[m,n]=size(f);
+n_butterworth=2;%n-butterworth
+r=25;
+for i=1:m
+    for j=1:n
+        b(i,j)=sqrt((i-fix(m/2))^2+(j-fix(n/2))^2);
+        h(i,j)=exp(-b(i,j)^2/(2*r^2));
+        g(i,j)=h(i,j)*f(i,j);
+    end
+end
+g1=ifftshift(g);
+g1=ifft2(g1);
+g1=uint8(real(g1));
+subplot(2,2,2);
+imshow(g1);
+title('test1.pgm  Gaussian  半径r=25');
+w=0;
+w1=0;
+for i=1:m
+    for j=1:n
+        e1=(abs(g(i,j)))^2;
+        w1=w1+e1;
+        e=(abs(f(i,j)))^2;
+        w=w+e;
+    end
+end
+pb=w1/w
+
+
+p=imread('test1.pgm');
+subplot (2,2,3) ; 
+imshow(p);
+title('test1.pgm的原始图像');
+a=double(p);
+f=fft2(a);
+f=fftshift(f);
+[m,n]=size(f);
+n_butterworth=2;%n-butterworth
+r=75;
+for i=1:m
+    for j=1:n
+        b(i,j)=sqrt((i-fix(m/2))^2+(j-fix(n/2))^2);
+        h(i,j)=exp(-b(i,j)^2/(2*r^2));
+        g(i,j)=h(i,j)*f(i,j);
+    end
+end
+g1=ifftshift(g);
+g1=ifft2(g1);
+g1=uint8(real(g1));
+subplot(2,2,4);
+imshow(g1);
+title('test1.pgm  Gaussian  半径r=75');
+w=0;
+w1=0;
+for i=1:m
+    for j=1:n
+        e1=(abs(g(i,j)))^2;
+        w1=w1+e1;
+        e=(abs(f(i,j)))^2;
+        w=w+e;
+    end
+end
+pb1=w1/w
+
+
+
+clear;
+p=imread('test2.tif');
+figure(2)
+subplot (2,2,1) ; 
+imshow(p);
+title('test2.tif的原始图像');
+a=double(p);
+f=fft2(a);
+f=fftshift(f);
+[m,n]=size(f);
+n_butterworth=2;%n-butterworth
+r=25;
+for i=1:m
+    for j=1:n
+        b(i,j)=sqrt((i-fix(m/2))^2+(j-fix(n/2))^2);
+        h(i,j)=exp(-b(i,j)^2/(2*r^2));
+        g(i,j)=h(i,j)*f(i,j);
+    end
+end
+g1=ifftshift(g);
+g1=ifft2(g1);
+g1=uint8(real(g1));
+subplot(2,2,2);
+imshow(g1);
+title('test2.tif  Gaussian  半径r=25');
+w=0;
+w1=0;
+for i=1:m
+    for j=1:n
+        e1=(abs(g(i,j)))^2;
+        w1=w1+e1;
+        e=(abs(f(i,j)))^2;
+        w=w+e;
+    end
+end
+pb2=w1/w
+
+clear;
+p=imread('test2.tif');
+subplot (2,2,3) ; 
+imshow(p);
+title('test2.tif的原始图像');
+a=double(p);
+f=fft2(a);
+f=fftshift(f);
+[m,n]=size(f);
+n_butterworth=2;%n-butterworth
+r=75;
+for i=1:m
+    for j=1:n
+        b(i,j)=sqrt((i-fix(m/2))^2+(j-fix(n/2))^2);
+        h(i,j)=exp(-b(i,j)^2/(2*r^2));
+        g(i,j)=h(i,j)*f(i,j);
+    end
+end
+g1=ifftshift(g);
+g1=ifft2(g1);
+g1=uint8(real(g1));
+subplot(2,2,4);
+imshow(g1);
+title('test2.tif  Gaussian  半径r=75');
+w=0;
+w1=0;
+for i=1:m
+    for j=1:n
+        e1=(abs(g(i,j)))^2;
+        w1=w1+e1;
+        e=(abs(f(i,j)))^2;
+        w=w+e;
+    end
+end
+pb3=w1/w
+
+
+
+
+2频域高通滤波器：设计高通滤波器包括butterworth and Gaussian，在频域增强边缘。选择半径和计算功率谱比，测试图像test3,4：分析各自优缺点；
+%1.butterworth  高通
+clear;
+p=imread('test3_corrupt.pgm');
+figure(1)
+subplot (2,2,1) ; 
+imshow(p);
+title('test3_corrupt的原始图像');
+a=double(p);
+f=fft2(a);
+f=fftshift(f);
+[m,n]=size(f);
+n_butterworth=2;
+r=5;
+for i=1:m
+    for j=1:n
+        b(i,j)=sqrt((i-fix(m/2))^2+(j-fix(n/2))^2);
+        h(i,j)=1/(1+(r/b(i,j))^(2*n_butterworth));
+        g(i,j)=h(i,j)*f(i,j);
+    end
+end
+g1=ifftshift(g);
+g1=ifft2(g1);
+g1=uint8(real(g1));
+subplot(2,2,2);
+imshow(g1);
+title('test3_corrupt  butterworth  半径r=5');
+w=0;
+w1=0;
+for i=1:m
+    for j=1:n
+        e1=(abs(g(i,j)))^2;
+        w1=w1+e1;
+        e=(abs(f(i,j)))^2;
+        w=w+e;
+    end
+end
+pb=w1/w
+
+
+p=imread('test3_corrupt.pgm');
+subplot (2,2,3) ; 
+imshow(p);
+title('test3_corrupt的原始图像');
+a=double(p);
+f=fft2(a);
+f=fftshift(f);
+[m,n]=size(f);
+n_butterworth=2;%n-butterworth
+r=15;
+for i=1:m
+    for j=1:n
+        b(i,j)=sqrt((i-fix(m/2))^2+(j-fix(n/2))^2);
+        h(i,j)=1/(1+(r/b(i,j))^(2*n_butterworth));
+        g(i,j)=h(i,j)*f(i,j);
+    end
+end
+g1=ifftshift(g);
+g1=ifft2(g1);
+g1=uint8(real(g1));
+subplot(2,2,4);
+imshow(g1);
+title('test3_corrupt  butterworth  半径r=15');
+w=0;
+w1=0;
+for i=1:m
+    for j=1:n
+        e1=(abs(g(i,j)))^2;
+        w1=w1+e1;
+        e=(abs(f(i,j)))^2;
+        w=w+e;
+    end
+end
+pb1=w1/w
+
+
+
+clear;
+p=imread('test4 copy.bmp');
+figure(2)
+subplot (2,2,1) ; 
+imshow(p);
+title('test4 copy的原始图像');
+a=double(p);
+f=fft2(a);
+f=fftshift(f);
+[m,n]=size(f);
+n_butterworth=2;%n-butterworth
+r=5;
+for i=1:m
+    for j=1:n
+        b(i,j)=sqrt((i-fix(m/2))^2+(j-fix(n/2))^2);
+        h(i,j)=1/(1+(r/b(i,j))^(2*n_butterworth));
+        g(i,j)=h(i,j)*f(i,j);
+    end
+end
+g1=ifftshift(g);
+g1=ifft2(g1);
+g1=uint8(real(g1));
+subplot(2,2,2);
+imshow(g1);
+title('test4 copy  butterworth  半径r=5');
+w=0;
+w1=0;
+for i=1:m
+    for j=1:n
+        e1=(abs(g(i,j)))^2;
+        w1=w1+e1;
+        e=(abs(f(i,j)))^2;
+        w=w+e;
+    end
+end
+pb2=w1/w
+
+clear;
+p=imread('test4 copy.bmp');
+subplot (2,2,3) ; 
+imshow(p);
+title('test4 copy的原始图像');
+a=double(p);
+f=fft2(a);
+f=fftshift(f);
+[m,n]=size(f);
+n_butterworth=2;%n-butterworth
+r=15;
+for i=1:m
+    for j=1:n
+        b(i,j)=sqrt((i-fix(m/2))^2+(j-fix(n/2))^2);
+        h(i,j)=1/(1+(r/b(i,j))^(2*n_butterworth));
+        g(i,j)=h(i,j)*f(i,j);
+    end
+end
+g1=ifftshift(g);
+g1=ifft2(g1);
+g1=uint8(real(g1));
+subplot(2,2,4);
+imshow(g1);
+title('test4 copy  butterworth  半径r=15');
+w=0;
+w1=0;
+for i=1:m
+    for j=1:n
+        e1=(abs(g(i,j)))^2;
+        w1=w1+e1;
+        e=(abs(f(i,j)))^2;
+        w=w+e;
+    end
+end
+pb3=w1/w
+
+
+%2.高斯高通
+clear;
+p=imread('test3_corrupt.pgm');
+figure(1)
+subplot (2,2,1) ; 
+imshow(p);
+title('test3_corrupt的原始图像');
+a=double(p);
+f=fft2(a);
+f=fftshift(f);
+[m,n]=size(f);
+n_butterworth=2;%n-butterworth
+r=5;
+for i=1:m
+    for j=1:n
+        b(i,j)=sqrt((i-fix(m/2))^2+(j-fix(n/2))^2);
+        h(i,j)=1-exp(-b(i,j)^2/(2*r^2));
+        g(i,j)=h(i,j)*f(i,j);
+    end
+end
+g1=ifftshift(g);
+g1=ifft2(g1);
+g1=uint8(real(g1));
+subplot(2,2,2);
+imshow(g1);
+title('test3_corrupt  Gaussian  半径r=5');
+w=0;
+w1=0;
+for i=1:m
+    for j=1:n
+        e1=(abs(g(i,j)))^2;
+        w1=w1+e1;
+        e=(abs(f(i,j)))^2;
+        w=w+e;
+    end
+end
+pb=w1/w
+
+
+p=imread('test3_corrupt.pgm');
+subplot (2,2,3) ; 
+imshow(p);
+title('test3_corrupt的原始图像');
+a=double(p);
+f=fft2(a);
+f=fftshift(f);
+[m,n]=size(f);
+n_butterworth=2;%n-butterworth
+r=15;
+for i=1:m
+    for j=1:n
+        b(i,j)=sqrt((i-fix(m/2))^2+(j-fix(n/2))^2);
+        h(i,j)=1-exp(-b(i,j)^2/(2*r^2));
+        g(i,j)=h(i,j)*f(i,j);
+    end
+end
+g1=ifftshift(g);
+g1=ifft2(g1);
+g1=uint8(real(g1));
+subplot(2,2,4);
+imshow(g1);
+title('test3_corrupt  Gaussian  半径r=15');
+w=0;
+w1=0;
+for i=1:m
+    for j=1:n
+        e1=(abs(g(i,j)))^2;
+        w1=w1+e1;
+        e=(abs(f(i,j)))^2;
+        w=w+e;
+    end
+end
+pb1=w1/w
+
+
+
+clear;
+p=imread('test4 copy.bmp');
+figure(2)
+subplot (2,2,1) ; 
+imshow(p);
+title('test4 copy的原始图像');
+a=double(p);
+f=fft2(a);
+f=fftshift(f);
+[m,n]=size(f);
+n_butterworth=2;%n-butterworth
+r=5;
+for i=1:m
+    for j=1:n
+        b(i,j)=sqrt((i-fix(m/2))^2+(j-fix(n/2))^2);
+        h(i,j)=1-exp(-b(i,j)^2/(2*r^2));
+        g(i,j)=h(i,j)*f(i,j);
+    end
+end
+g1=ifftshift(g);
+g1=ifft2(g1);
+g1=uint8(real(g1));
+subplot(2,2,2);
+imshow(g1);
+title('test4 copy  Gaussian  半径r=5');
+w=0;
+w1=0;
+for i=1:m
+    for j=1:n
+        e1=(abs(g(i,j)))^2;
+        w1=w1+e1;
+        e=(abs(f(i,j)))^2;
+        w=w+e;
+    end
+end
+pb2=w1/w
+
+clear;
+p=imread('test4 copy.bmp');
+subplot (2,2,3) ; 
+imshow(p);
+title('test4 copy的原始图像');
+a=double(p);
+f=fft2(a);
+f=fftshift(f);
+[m,n]=size(f);
+n_butterworth=2;%n-butterworth
+r=15;
+for i=1:m
+    for j=1:n
+        b(i,j)=sqrt((i-fix(m/2))^2+(j-fix(n/2))^2);
+        h(i,j)=1-exp(-b(i,j)^2/(2*r^2));
+        g(i,j)=h(i,j)*f(i,j);
+    end
+end
+g1=ifftshift(g);
+g1=ifft2(g1);
+g1=uint8(real(g1));
+subplot(2,2,4);
+imshow(g1);
+title('test4 copy  Gaussian  半径r=15');
+w=0;
+w1=0;
+for i=1:m
+    for j=1:n
+        e1=(abs(g(i,j)))^2;
+        w1=w1+e1;
+        e=(abs(f(i,j)))^2;
+        w=w+e;
+    end
+end
+pb3=w1/w
+
+
+
+
+3其他高通滤波器：拉普拉斯和Unmask，对测试图像test3,4滤波；分析各自优缺点；
+%1.拉普拉斯
+clear;
+p=imread('test3_corrupt.pgm');
+figure(1)
+subplot (2,2,1) ; 
+imshow(p);
+title('test3_corrupt的原始图像');
+a=double(p);
+f=fft2(a);
+f=fftshift(f);
+[m,n]=size(f);
+k=1;
+for i=1:m
+    for j=1:n
+        b(i,j)=sqrt((i-fix(m/2))^2+(j-fix(n/2))^2);
+        h(i,j)=1+k*4*pi^2*b(i,j)^2;
+        g(i,j)=h(i,j)*f(i,j);
+    end
+end
+g1=ifftshift(g);
+g1=ifft2(g1);
+g1=uint8(real(g1));
+subplot(2,2,2);
+imshow(g1);
+title('test3_corrupt  Laplace');
+w=0;
+w1=0;
+for i=1:m
+    for j=1:n
+        e1=(abs(g(i,j)))^2;
+        w1=w1+e1;
+        e=(abs(f(i,j)))^2;
+        w=w+e;
+    end
+end
+pb=w1/w
+
+
+clear;
+p=imread('test4 copy.bmp');
+subplot (2,2,3) ; 
+imshow(p);
+title('test4 copy的原始图像');
+a=double(p);
+f=fft2(a);
+f=fftshift(f);
+[m,n]=size(f);
+k=1;
+for i=1:m
+    for j=1:n
+        b(i,j)=sqrt((i-fix(m/2))^2+(j-fix(n/2))^2);
+        h(i,j)=1+k*4*pi^2*b(i,j)^2;
+        g(i,j)=h(i,j)*f(i,j);
+    end
+end
+g1=ifftshift(g);
+g1=ifft2(g1);
+g1=uint8(real(g1));
+subplot(2,2,4);
+imshow(g1);
+title('test4 copy  Laplace');
+w=0;
+w1=0;
+for i=1:m
+    for j=1:n
+        e1=(abs(g(i,j)))^2;
+        w1=w1+e1;
+        e=(abs(f(i,j)))^2;
+        w=w+e;
+    end
+end
+pb1=w1/w
+
+
+
+%2.Unmask
+clear;
+p=imread('test3_corrupt.pgm');
+figure(1)
+subplot (2,2,1) ; 
+imshow(p);
+title('test3_corrupt的原始图像');
+a=double(p);
+f=fft2(a);
+f=fftshift(f);
+[m,n]=size(f);
+k=1;
+k1=2;
+r=5;
+for i=1:m
+    for j=1:n
+        b(i,j)=sqrt((i-fix(m/2))^2+(j-fix(n/2))^2);
+        h(i,j)=1-exp(-b(i,j)^2/(2*r^2));
+        g(i,j)=(k+k1*h(i,j))*f(i,j);
+    end
+end
+g1=ifftshift(g);
+g1=ifft2(g1);
+g1=uint8(real(g1));
+subplot(2,2,2);
+imshow(g1);
+title('test3_corrupt  Unmask');
+w=0;
+w1=0;
+for i=1:m
+    for j=1:n
+        e1=(abs(g(i,j)))^2;
+        w1=w1+e1;
+        e=(abs(f(i,j)))^2;
+        w=w+e;
+    end
+end
+pb=w1/w
+
+
+clear;
+p=imread('test4 copy.bmp');
+subplot (2,2,3) ; 
+imshow(p);
+title('test4 copy的原始图像');
+a=double(p);
+f=fft2(a);
+f=fftshift(f);
+[m,n]=size(f);
+k=1;
+k1=2;
+r=5;
+for i=1:m
+    for j=1:n
+        b(i,j)=sqrt((i-fix(m/2))^2+(j-fix(n/2))^2);
+        h(i,j)=1-exp(-b(i,j)^2/(2*r^2));
+        g(i,j)=(k+k1*h(i,j))*f(i,j);
+    end
+end
+g1=ifftshift(g);
+g1=ifft2(g1);
+g1=uint8(real(g1));
+subplot(2,2,4);
+imshow(g1);
+title('test4 copy  Unmask');
+w=0;
+w1=0;
+for i=1:m
+    for j=1:n
+        e1=(abs(g(i,j)))^2;
+        w1=w1+e1;
+        e=(abs(f(i,j)))^2;
+        w=w+e;
+    end
+end
+pb1=w1/w
